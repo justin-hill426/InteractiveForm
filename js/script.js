@@ -41,5 +41,30 @@ designSelection.addEventListener('change', e => {
       currElement.setAttribute('selected', 'false');
     }
   }
-  //FIXME start on a proper list starting value
+  //Set default selection value for each (so that a leftover unavailable option isn't initially selected)
+  if(eventValue === 'js puns' ) {
+      document.querySelector('option[value = "cornflowerblue"]').selected = true;
+  }
+  if(eventValue === 'heart js') {
+      document.querySelector('option[value = "tomato"]').selected = true;
+  }
+});
+
+/*
+Setting up the Register For Activities section
+*/
+const activitiesSection = document.querySelector('#activities');
+const activitiesCost = document.querySelector('#activities-cost');
+//totalCost of the activities
+let totalCost = 0;
+activitiesSection.addEventListener('change', e => {
+  targetCost = +e.target.getAttribute('data-cost');
+  console.log(typeof targetCost);
+  if(e.target.checked) {
+    totalCost += targetCost;
+  }
+  else {
+    totalCost -= targetCost;
+  }
+  activitiesCost.innerHTML = `Total: $${totalCost}`;
 });
