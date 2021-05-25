@@ -113,7 +113,8 @@ paymentSelection.addEventListener('change', e => {
 perform submission validation
 */
 const formReference = document.querySelector('form');
-const emailReference = document.querySelector('#email')
+const emailReference = document.querySelector('#email');
+const activityBoxes = document.querySelectorAll('input[type = "checkbox"]');
 
 //add event listener to validate form submission
 formReference.addEventListener('submit', e => {
@@ -127,16 +128,21 @@ formReference.addEventListener('submit', e => {
 });
 
 function formIsValid() {
-  if(nameInput.value === "") {
-    return false;
-  }
-  else if(emai)
+  return validateName() && validateEmail() && validateActivities();
 }
 
-function validateName(name) {
+function validateName() {
   return nameInput.value !== "";
 }
-function validateEmail(email) {
+function validateEmail() {
   const regex = /^\w+@\w+.(com|net|org)$/;
-  return regex.test(email);
+  return regex.test(emailReference.value);
+}
+function validateActivities() {
+  for(int i = 0; i < activityBoxes.length; i++) {
+    if(activityBoxes[i].checked) {
+      return true;
+    }
+  }
+  return false;
 }
