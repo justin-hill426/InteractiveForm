@@ -24,6 +24,7 @@ Setting up the T-Shirt info section
 const designSelection = document.querySelector('#design');
 const colorSelection = document.querySelector('#color');
 const colorOptions = colorSelection.children;
+const activityBoxes = document.querySelectorAll('input[type = "checkbox"]');
 colorSelection.disabled = true;
 
 designSelection.addEventListener('change', e => {
@@ -65,6 +66,19 @@ activitiesSection.addEventListener('change', e => {
   else {
     totalCost -= targetCost;
   }
+  for(let i = 1; i < activityBoxes.length; i++) {
+
+      if(activityBoxes[i].getAttribute('data-day-and-time') === e.target.getAttribute('data-day-and-time') && activityBoxes[i] !== e.target && e.target.checked) {
+        activityBoxes[i].disabled = true;
+        activityBoxes[i].parentElement.classList.add('disabled');
+      }
+      else if (activityBoxes[i].getAttribute('data-day-and-time') === e.target.getAttribute('data-day-and-time') && activityBoxes[i] !== e.target && !e.target.checked) {
+        activityBoxes[i].parentElement.classList.remove('disabled');
+        activityBoxes[i].disabled = false;
+      }
+
+  }
+
   activitiesCost.innerHTML = `Total: $${totalCost}`;
 });
 
@@ -113,76 +127,132 @@ perform submission validation
 */
 const formReference = document.querySelector('form');
 const emailReference = document.querySelector('#email');
-const activityBoxes = document.querySelectorAll('input[type = "checkbox"]');
 
 //add event listener to validate form submission
 formReference.addEventListener('submit', e => {
   if(formIsValid()) {
     //do nothing and let it submit
-
   }
   else {
-    alert("You have errors");
     e.preventDefault();
   }
 });
 
 function formIsValid() {
-  return validateName() && validateEmail() && validateActivities() && validateCreditCard();
+  const nameValidation = validateName();
+  const emailValidation = validateEmail();
+  const activitiesValidation = validateActivities();
+  const creditValidation = validateCreditCard();
+  return nameValidation && emailValidation && activitiesValidation && creditValidation;
+}
+
+//display hints and add validation to the class list
+function displayHint(parentElement) {
+  parentElement.classList.add('not-valid');
+  parentElement.classList.remove('valid');
+  parentElement.lastElementChild.style.display = 'block';
+}
+
+//don't display hints and add validation to classList
+function displayValid(parentElement) {
+  parentElement.classList.add('valid');
+  parentElement.classList.remove('not-valid');
+  parentElement.lastElementChild.style.display = 'none';
 }
 
 //make sure the name field is not blank
 function validateName() {
-  return nameInput.value !== "";
+  if(nameInput.value !== "") {
+    displayValid(nameInput.parentElement);
+    return true;
+  }
+  else {
+    displayHint(nameInput.parentElement);
+    return false;
+  }
 }
 
+emailReference.addEventListener('keyup', () => {
+  validateEmail();
+});
 //make sure the email is in valid format
 function validateEmail() {
-  const regex = /^\w+@\w+.(com|net|org)$/;
-  return regex.test(emailReference.value);
+  const regex = /^\S+@\S+.(com|net|org|edu)$/;
+  if(regex.test(emailReference.value)) {
+    displayValid(emailReference.parentElement);
+    return true;
+  }
+  else {
+    displayHint(emailReference.parentElement);
+    return false;
+  }
 }
 
 //check to see if at least one activity is clicked
 function validateActivities() {
   for(let i = 0; i < activityBoxes.length; i++) {
     if(activityBoxes[i].checked) {
+      displayValid(activitiesSection);
       return true;
     }
   }
+  displayHint(activitiesSection);
   return false;
 }
 
 //helper function to validate a credit number using regex
 function validateCreditNum() {
-  const creditNum = document.querySelector('#cc-num').value;
+  const creditNum = document.querySelector('#cc-num');
+  const creditValue = creditNum.value;
   const creditRegex = /\d{13,16}/;
-  if(creditRegex.test(creditNum)) {
-
+  if(creditRegex.test(creditValue)) {
+    displayValid(creditNum.parentElement);
+    return true;
   }
+  else {
+    displayHint(creditNum.parentElement);
+    return false;
+  }
+
 }
 
 //helper function to validate a zip code using regex
 function validateZipNum() {
-  const zipNum = document.querySelector('#zip').value;
+  const zipNum = document.querySelector('#zip');
+  const zipValue = zipNum.value;
   const zipRegex = /\d{5}/;
-  if(zipRegex.test(zipNum)) {
-
+  if(zipRegex.test(zipValue)) {
+    displayValid(zipNum.parentElement);
+    return true;
+  }
+  else {
+    displayHint(zipNum.parentElement);
+    return false;
   }
 }
 
 //helper function to validate a cvv number using regex
 function validateCvvNum() {
-  const cvvNum = document.querySelector('#cvv').value;
+  const cvvNum = document.querySelector('#cvv');
+  const cvvValue = cvvNum.value;
   const cvvRegex = /\d{3}/;
-  if(cvvRegex.test(cvvNum)) {
-
+  if(cvvRegex.test(cvvValue)) {
+    displayValid(cvvNum.parentElement);
+    return true;
+  }
+  else {
+    displayHint(cvvNum.parentElement);
+    return false;
   }
 }
 
 //validate the user credit number, zip number, and cvv number inputs
 function validateCreditCard() {
   if(paymentSelection.children[1].selected) {
-    return validateCreditNum() && validateZipNum() && validateCvvNum();
+    const creditBool = validateCreditNum();
+    const zipBool = validateZipNum();
+    const cvvBool = validateCvvNum();
+    return creditBool && zipBool && cvvBool;
   }
 }
 
