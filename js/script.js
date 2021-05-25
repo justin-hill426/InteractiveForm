@@ -59,7 +59,6 @@ const activitiesCost = document.querySelector('#activities-cost');
 let totalCost = 0;
 activitiesSection.addEventListener('change', e => {
   targetCost = +e.target.getAttribute('data-cost');
-  console.log(typeof targetCost);
   if(e.target.checked) {
     totalCost += targetCost;
   }
@@ -120,6 +119,7 @@ const activityBoxes = document.querySelectorAll('input[type = "checkbox"]');
 formReference.addEventListener('submit', e => {
   if(formIsValid()) {
     //do nothing and let it submit
+
   }
   else {
     alert("You have errors");
@@ -128,21 +128,82 @@ formReference.addEventListener('submit', e => {
 });
 
 function formIsValid() {
-  return validateName() && validateEmail() && validateActivities();
+  return validateName() && validateEmail() && validateActivities() && validateCreditCard();
 }
 
+//make sure the name field is not blank
 function validateName() {
   return nameInput.value !== "";
 }
+
+//make sure the email is in valid format
 function validateEmail() {
   const regex = /^\w+@\w+.(com|net|org)$/;
   return regex.test(emailReference.value);
 }
+
+//check to see if at least one activity is clicked
 function validateActivities() {
-  for(int i = 0; i < activityBoxes.length; i++) {
+  for(let i = 0; i < activityBoxes.length; i++) {
     if(activityBoxes[i].checked) {
       return true;
     }
   }
   return false;
 }
+
+//helper function to validate a credit number using regex
+function validateCreditNum() {
+  const creditNum = document.querySelector('#cc-num').value;
+  const creditRegex = /\d{13,16}/;
+  if(creditRegex.test(creditNum)) {
+
+  }
+}
+
+//helper function to validate a zip code using regex
+function validateZipNum() {
+  const zipNum = document.querySelector('#zip').value;
+  const zipRegex = /\d{5}/;
+  if(zipRegex.test(zipNum)) {
+
+  }
+}
+
+//helper function to validate a cvv number using regex
+function validateCvvNum() {
+  const cvvNum = document.querySelector('#cvv').value;
+  const cvvRegex = /\d{3}/;
+  if(cvvRegex.test(cvvNum)) {
+
+  }
+}
+
+//validate the user credit number, zip number, and cvv number inputs
+function validateCreditCard() {
+  if(paymentSelection.children[1].selected) {
+    return validateCreditNum() && validateZipNum() && validateCvvNum();
+  }
+}
+
+const allInputs = document.querySelectorAll('input');
+//add focus/blur to the checkbox elements when needed
+function addFocus(element) {
+  element.classList.add('focus');
+}
+
+function removeFocus(element) {
+  element.classList.remove('focus');
+}
+
+//add focus and blur event actions to labels of respective input elements
+allInputs.forEach((item) => {
+   const label = item.parentElement;
+   item.addEventListener('focus', () => {
+     addFocus(label);
+   });
+   item.addEventListener('blur', () =>{
+     removeFocus(label);
+   });
+
+ });
