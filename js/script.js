@@ -179,10 +179,18 @@ emailReference.addEventListener('keyup', () => {
 function validateEmail() {
   const regex = /^\S+@\S+.(com|net|org|edu)$/;
   if(regex.test(emailReference.value)) {
+    document.querySelector('#email-hint-blank').style.display = 'none';
     displayValid(emailReference.parentElement);
     return true;
   }
+  else if(emailReference.value === "") {
+    emailReference.parentElement.classList.remove('valid');
+    emailReference.parentElement.lastElementChild.style.display = 'none';
+    emailReference.parentElement.classList.add('not-valid');
+    document.querySelector('#email-hint-blank').style.display = 'block';
+  }
   else {
+    document.querySelector('#email-hint-blank').style.display = 'none';
     displayHint(emailReference.parentElement);
     return false;
   }
